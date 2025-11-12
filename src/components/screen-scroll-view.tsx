@@ -1,4 +1,3 @@
-import { useHeaderHeight } from '@react-navigation/elements';
 import { cn } from 'heroui-native';
 import { type FC, type PropsWithChildren } from 'react';
 import { Platform, ScrollView, type ScrollViewProps } from 'react-native';
@@ -10,25 +9,30 @@ const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 interface Props extends AnimatedProps<ScrollViewProps> {
   className?: string;
   contentContainerClassName?: string;
+  padTop?: boolean;
 }
 
 export const ScreenScrollView: FC<PropsWithChildren<Props>> = ({
   children,
   className,
   contentContainerClassName,
+  padTop = false,
   ...props
 }) => {
   const insets = useSafeAreaInsets();
-  const headerHeight = useHeaderHeight();
+  const topPadding = padTop
+    ? Platform.select({
+        ios: insets.top,
+        android: insets.top,
+        default: insets.top,
+      })
+    : 0;
   return (
     <AnimatedScrollView
       className={cn('bg-background', className)}
       contentContainerClassName={cn('px-5', contentContainerClassName)}
       contentContainerStyle={{
-        paddingTop: Platform.select({
-          ios: headerHeight,
-          android: 0,
-        }),
+        paddingTop: topPadding,
         paddingBottom: insets.bottom + 32,
       }}
       showsVerticalScrollIndicator={false}

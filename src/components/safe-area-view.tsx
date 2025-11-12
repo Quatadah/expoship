@@ -19,14 +19,16 @@ export const SafeAreaView: FC<PropsWithChildren<Props>> = ({
 }) => {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const topPadding = Platform.select({
+    ios: headerHeight > 0 ? headerHeight : insets.top,
+    android: insets.top,
+    default: insets.top,
+  });
   return (
     <AnimatedView
       className={cn('bg-background', className)}
       style={{
-        paddingTop: Platform.select({
-          ios: headerHeight,
-          android: 0,
-        }),
+        paddingTop: topPadding,
         paddingBottom: insets.bottom + 32,
       }}
       {...props}

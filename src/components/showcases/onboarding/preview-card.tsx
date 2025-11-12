@@ -40,9 +40,16 @@ export const PreviewCard: FC<PreviewCardProps> = ({
   const initialLeft = index * itemWidth - shift;
 
   const rContainerStyle = useAnimatedStyle(() => {
-    const normalizedOffset =
-      ((scrollOffsetX.value % allItemsWidth) + allItemsWidth) % allItemsWidth;
-    const left = ((initialLeft - normalizedOffset) % allItemsWidth) + shift;
+    'worklet';
+
+    const wrapValue = (value: number, modulo: number) => {
+      'worklet';
+      return ((value % modulo) + modulo) % modulo;
+    };
+
+    const normalizedOffset = wrapValue(scrollOffsetX.value, allItemsWidth);
+    const wrappedOffset = wrapValue(initialLeft - normalizedOffset, allItemsWidth);
+    const left = wrappedOffset + shift;
 
     return {
       left,

@@ -1,3 +1,13 @@
+import 'react-native-url-polyfill/auto';
+
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Entypo from '@expo/vector-icons/Entypo';
+import Feather from '@expo/vector-icons/Feather';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -15,7 +25,11 @@ import {
   ReanimatedLogLevel,
 } from 'react-native-reanimated';
 import '../../global.css';
+import { AppStatusBar } from '../components/app-status-bar';
 import { AppThemeProvider } from '../contexts/app-theme-context';
+import { AuthProvider } from '../features/auth/auth-context';
+import { BillingProvider } from '../features/billing/billing-context';
+import { ToastProvider } from '../components/toast-context';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -23,14 +37,22 @@ configureReanimatedLogger({
 });
 
 export default function Layout() {
-  const fonts = useFonts({
+  const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
+    ...Feather.font,
+    ...Ionicons.font,
+    ...MaterialCommunityIcons.font,
+    ...FontAwesome.font,
+    ...FontAwesome5.font,
+    ...FontAwesome6.font,
+    ...Entypo.font,
+    ...AntDesign.font,
   });
 
-  if (!fonts) {
+  if (!fontsLoaded) {
     return null;
   }
 
@@ -38,15 +60,22 @@ export default function Layout() {
     <GestureHandlerRootView style={styles.root}>
       <KeyboardProvider>
         <AppThemeProvider>
-          <HeroUINativeProvider
-            config={{
-              textProps: {
-                allowFontScaling: false,
-              },
-            }}
-          >
-            <Slot />
-          </HeroUINativeProvider>
+          <AuthProvider>
+            <BillingProvider>
+              <ToastProvider>
+                <HeroUINativeProvider
+                  config={{
+                    textProps: {
+                      allowFontScaling: false,
+                    },
+                  }}
+                >
+                  <AppStatusBar />
+                  <Slot />
+                </HeroUINativeProvider>
+              </ToastProvider>
+            </BillingProvider>
+          </AuthProvider>
         </AppThemeProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>

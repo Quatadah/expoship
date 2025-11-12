@@ -1,5 +1,12 @@
-import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+} from 'react';
 import { Uniwind, useUniwind } from 'uniwind';
+import { storage, storageKeys } from '../lib/storage';
 
 type ThemeName =
   | 'light'
@@ -27,6 +34,17 @@ export const AppThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { theme } = useUniwind();
+
+  useEffect(() => {
+    const persisted = storage.getString(storageKeys.theme);
+    if (persisted) {
+      Uniwind.setTheme(persisted as ThemeName);
+    }
+  }, []);
+
+  useEffect(() => {
+    storage.setString(storageKeys.theme, theme);
+  }, [theme]);
 
   const isLight = useMemo(() => {
     return theme === 'light' || theme.endsWith('-light');

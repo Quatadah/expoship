@@ -23,7 +23,7 @@ export const TriggerButton = () => {
   return (
     <Animated.View
       className="absolute right-6 size-14 items-center justify-center rounded-full bg-accent"
-      style={[{ bottom: insets.bottom + 24 }, animatedStyle]}
+      style={[{ bottom: insets.bottom + 48 }, animatedStyle]}
     >
       <FontAwesome6
         name="list-ul"

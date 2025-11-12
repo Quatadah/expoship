@@ -7,6 +7,7 @@ import {
   StyleSheet,
   useWindowDimensions,
   View,
+  type LayoutChangeEvent,
 } from 'react-native';
 import Animated, {
   Extrapolation,
@@ -84,8 +85,11 @@ export const UsageVariantFlatList = ({
   const { isDark } = useAppTheme();
 
   const insets = useSafeAreaInsets();
-  const { width, height } = useWindowDimensions();
-  const itemHeight = height;
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const [containerWidth, setContainerWidth] = useState(windowWidth);
+  const [containerHeight, setContainerHeight] = useState(windowHeight);
+  const itemHeight = containerHeight > 0 ? containerHeight : windowHeight;
+  const itemWidth = containerWidth > 0 ? containerWidth : windowWidth;
 
   const listRef = useRef<FlatList<UsageVariant>>(null);
 
@@ -112,6 +116,19 @@ export const UsageVariantFlatList = ({
       scrollY.set(event.contentOffset.y);
     },
   });
+
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { width, height } = event.nativeEvent.layout;
+      if (width !== containerWidth) {
+        setContainerWidth(width);
+      }
+      if (height !== containerHeight) {
+        setContainerHeight(height);
+      }
+    },
+    [containerHeight, containerWidth]
+  );
 
   const animatedProps = useAnimatedProps(() => {
     if (data.length === 1) {
@@ -143,7 +160,7 @@ export const UsageVariantFlatList = ({
   });
 
   return (
-    <>
+    <View style={styles.container} onLayout={handleLayout}>
       <Animated.FlatList
         ref={listRef}
         data={data}
@@ -153,8 +170,8 @@ export const UsageVariantFlatList = ({
             index={index}
             scrollY={scrollY}
             itemHeight={itemHeight}
-            width={width}
-            height={height}
+            width={itemWidth}
+            height={itemHeight}
           />
         )}
         keyExtractor={(item) => item.value}
@@ -173,6 +190,7 @@ export const UsageVariantFlatList = ({
         scrollEventThrottle={16}
         scrollEnabled={scrollEnabled}
         keyboardShouldPersistTaps="handled"
+        style={styles.list}
       />
       {Platform.OS === 'ios' && (
         <AnimatedBlurView
@@ -186,19 +204,18 @@ export const UsageVariantFlatList = ({
           }
         />
       )}
-      <View
-        className="absolute left-6"
-        style={{ bottom: insets.bottom + 34 }}
-        pointerEvents="none"
-      >
-        <View className="gap-1">
+      <View style={styles.paginationWrapper} pointerEvents="none">
+        <View
+          className="gap-1"
+          style={[styles.paginationInner, { marginRight: insets.right + 16 }]}
+        >
           {data.map((item, index) => (
             <PaginationIndicator
               key={index}
               index={index}
               label={item.label}
               scrollY={scrollY}
-              itemSize={height}
+              itemSize={itemHeight}
             />
           ))}
         </View>
@@ -209,6 +226,24 @@ export const UsageVariantFlatList = ({
         setVariant={setCurrentVariant}
         listRef={listRef}
       />
-    </>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+  },
+  list: {
+    flex: 1,
+  },
+  paginationWrapper: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  paginationInner: {
+    marginRight: 16,
+  },
+});

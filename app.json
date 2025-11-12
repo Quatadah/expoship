@@ -1,15 +1,16 @@
 {
   "expo": {
-    "name": "HeroUI Native Example",
-    "slug": "heroui-native-example",
+    "name": "ExpoShip SaaS",
+    "slug": "expoship-saas",
     "version": "v1.0.0-beta.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "heroui-native-example",
+    "scheme": "expoship",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.quatadah.exposhipsaas"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +20,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.quatadah.exposhipsaas"
     },
     "web": {
       "output": "static",
@@ -38,11 +40,39 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.expoship",
+          "enableApplePay": true,
+          "enableGooglePay": true,
+          "androidPaymentConfiguration": {
+            "merchantName": "ExpoShip"
+          }
+        }
+      ],
+      "expo-secure-store",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "supabaseUrl": "https://wumpzogqldrcwouielom.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1bXB6b2dxbGRyY3dvdWllbG9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3Nzg3NTUsImV4cCI6MjA3ODM1NDc1NX0.h-DEjjLgPLQmMKBhRoFgWKwFRGSR_oei0oo1WwGNN3A",
+      "googleClientId": "",
+      "appleServiceId": "",
+      "deepLinkScheme": "expoship",
+      "revenuecatApiKey": "",
+      "revenuecatEntitlementId": "pro",
+      "stripePublishableKey": "",
+      "openAiApiKey": "",
+      "openAiBaseUrl": "https://api.openai.com/v1",
+      "eas": {
+        "projectId": ""
+      }
     }
   }
 }
